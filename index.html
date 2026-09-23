@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>日本政治バロメーター</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f4f6f8;
+    }
+    .card {
+      background: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      text-align: center;
+      width: 90%;
+      max-width: 600px;
+    }
+    h1 {
+      font-size: 20px;
+      margin-bottom: 30px;
+      color: #333;
+    }
+    .labels {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .liberal { color: #1e88e5; } /* 左・青 */
+    .conservative { color: #e53935; } /* 右・赤 */
+
+    .meter-container {
+      position: relative;
+      height: 24px;
+      background: linear-gradient(to right, #90caf9, #ffffff, #ef9a9a);
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      margin-bottom: 25px;
+    }
+    .center-line {
+      position: absolute;
+      left: 50%;
+      top: -6px;
+      bottom: -6px;
+      width: 2px;
+      background-color: #555;
+      transform: translateX(-50%);
+    }
+    .pointer {
+      position: absolute;
+      top: -8px;
+      width: 14px;
+      height: 40px;
+      background-color: #222;
+      border-radius: 4px;
+      transform: translateX(-50%);
+      transition: left 1s ease-in-out;
+    }
+    .status {
+      font-size: 16px;
+      font-weight: bold;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>現在の日本はどちら寄り？</h1>
+    
+    <div class="labels">
+      <span class="liberal">◀ リベラル</span>
+      <span class="conservative">保守 ▶</span>
+    </div>
+
+    <div class="meter-container">
+      <div class="center-line" title="中間線"></div>
+      <div class="pointer" id="pointer" style="left: 50%;"></div>
+    </div>
+
+    <div class="status" id="statusText">判定中...</div>
+  </div>
+
+  <script>
+    // 0(最大リベラル) 〜 50(中道) 〜 100(最大保守)
+    // ここに将来、自動解析サーバーから取得した数値を入れます
+    function updateMeter(score) {
+      const pointer = document.getElementById('pointer');
+      const statusText = document.getElementById('statusText');
+      
+      pointer.style.left = `${score}%`;
+
+      if (score < 45) {
+        statusText.innerHTML = `判定：<span style="color:#1e88e5">リベラル傾向（${score}%）</span>`;
+      } else if (score > 55) {
+        statusText.innerHTML = `判定：<span style="color:#e53935">保守傾向（${score}%）</span>`;
+      } else {
+        statusText.innerHTML = `判定：<span>中道・拮抗（${score}%）</span>`;
+      }
+    }
+
+    // デモ動作：1秒後に保守寄り（68%）へ自動アニメーション
+    setTimeout(() => {
+      updateMeter(68);
+    }, 1000);
+  </script>
+</body>
+</html>
