@@ -1,1 +1,25 @@
-{"score": 50}
+{
+  "score": 50,
+  "articles": [
+    {
+      "title": "週末は関東各地で雨の予報 注意",
+      "link": "https://news.yahoo.co.jp/pickup/6596394?source=rss"
+    },
+    {
+      "title": "取材許可巡る米政権措置 差し止め",
+      "link": "https://news.yahoo.co.jp/pickup/6596403?source=rss"
+    },
+    {
+      "title": "崖崩落で死亡 夫が過去に対応要求",
+      "link": "https://news.yahoo.co.jp/pickup/6596413?source=rss"
+    },
+    {
+      "title": "養魚場浸水 金魚など10万匹全滅か",
+      "link": "https://news.yahoo.co.jp/pickup/6596409?source=rss"
+    },
+    {
+      "title": "誤情報で民放批判 維新藤田氏謝罪",
+      "link": "https://news.yahoo.co.jp/pickup/6596414?source=rss"
+    }
+  ]
+}
