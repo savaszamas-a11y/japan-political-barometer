@@ -1,37 +1,58 @@
-import json
 import feedparser
+import json
+import re
 from google import genai
 
-# 1. Geminiクライアント初期化（GEMINI_API_KEYを環境変数に設定）
 client = genai.Client()
 
-# 2. ニュースRSSの取得（例：大手ニュース等のRSS URL）
+# RSSから記事を取得
 rss_url = "https://news.yahoo.co.jp/rss/topics/top-picks.xml"
 feed = feedparser.parse(rss_url)
 
-articles = [entry.title for entry in feed.entries[:5]]
-print(f"取得した記事: {articles}")
+articles = []
+for entry in feed.entries[:5]:
+    articles.append({
+        "title": entry.title,
+        "link": entry.link
+    })
 
-# 3. Geminiに記事全体の傾向を分析させる
+titles = [a["title"] for a in articles]
+print("取得した記事:", titles)
+
+# Geminiに政治傾向を判定させる
 prompt = f"""
-以下の最新ニュース記事群から、現在の日本の世論・政治的トピックの傾向を分析してください。
-0（極めてリベラル・革新）〜 50（完全な中道）〜 100（極めて保守・伝統）の整数値1点のみを出力してください。
-余計な解説は一切含めず、数値のみを返してください。
+以下のニュース見出しを総合的に見て、現在の政治・社会的な論調の傾向を0〜100の数値で評価してください。
+0 = 極めてリベラル・左派寄り
+50 = 中道・中立・拮抗
+100 = 極めて保守・右派寄り
 
-記事一覧:
-{chr(10).join(articles)}
+見出し一覧:
+{chr(10).join(titles)}
+
+回答は数字1つ（例: 65）のみを出力してください。
 """
 
 response = client.models.generate_content(
-    model='gemini-3.6-flash',
+    model="gemini-3.6-flash",
     contents=prompt,
 )
 
-score = int(response.text.strip())
+# スコアの抽出
+try:
+    score = int(response.text.strip())
+except Exception:
+    match = re.search(r"\d+", response.text)
+    score = int(match.group()) if match else 50
+
 print(f"判定スコア: {score}")
 
-# 4. HTMLが読み込めるようにJSON出力
+# スコアと記事一覧をまとめて保存
+data = {
+    "score": score,
+    "articles": articles
+}
+
 with open("score.json", "w", encoding="utf-8") as f:
-    json.dump({"score": score}, f)
+    json.dump(data, f, ensure_ascii=False, indent=2)
 
 print("score.json を更新しました！")
