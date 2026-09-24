@@ -91,27 +91,39 @@
   </div>
 
   <script>
-    // 0(最大リベラル) 〜 50(中道) 〜 100(最大保守)
-    // ここに将来、自動解析サーバーから取得した数値を入れます
-    function updateMeter(score) {
-      const pointer = document.getElementById('pointer');
-      const statusText = document.getElementById('statusText');
-      
-      pointer.style.left = `${score}%`;
+  function updateMeter(score) {
+    const pointer = document.getElementById('pointer');
+    const statusText = document.getElementById('statusText');
+    
+    pointer.style.left = `${score}%`;
 
-      if (score < 45) {
-        statusText.innerHTML = `判定：<span style="color:#1e88e5">リベラル傾向（${score}%）</span>`;
-      } else if (score > 55) {
-        statusText.innerHTML = `判定：<span style="color:#e53935">保守傾向（${score}%）</span>`;
-      } else {
-        statusText.innerHTML = `判定：<span>中道・拮抗（${score}%）</span>`;
-      }
+    if (score < 45) {
+      statusText.innerHTML = `判定：<span style="color:#1e88e5">リベラル傾向（${score}%）</span>`;
+    } else if (score > 55) {
+      statusText.innerHTML = `判定：<span style="color:#e53935">保守傾向（${score}%）</span>`;
+    } else {
+      statusText.innerHTML = `判定：<span>中道・拮抗（${score}%）</span>`;
     }
+  }
 
-    // デモ動作：1秒後に保守寄り（68%）へ自動アニメーション
-    setTimeout(() => {
-      updateMeter(68);
-    }, 1000);
-  </script>
+  // score.json を読み込んでメーターに反映する
+  fetch(`score.json?t=${new Date().getTime()}`, { cache: 'no-store' })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('データの取得に失敗しました');
+      }
+      return response.json();
+    })
+    .then(data => {
+      // 取得したスコアを反映（1秒待ってから滑らかに動かす）
+      setTimeout(() => {
+        updateMeter(data.score);
+      }, 1000);
+    })
+    .catch(error => {
+      console.error('読み込みエラー:', error);
+      document.getElementById('statusText').innerText = 'データ読み込み中...';
+    });
+</script>
 </body>
 </html>
