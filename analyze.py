@@ -1,7 +1,9 @@
 import feedparser
 import json
 import re
+import time
 from google import genai
+from google.genai import errors
 
 client = genai.Client()
 
@@ -19,7 +21,6 @@ for entry in feed.entries[:5]:
 titles = [a["title"] for a in articles]
 print("取得した記事:", titles)
 
-# Geminiに政治傾向を判定させる
 prompt = f"""
 以下のニュース見出しを総合的に見て、現在の政治・社会的な論調の傾向を0〜100の数値で評価してください。
 0 = 極めてリベラル・左派寄り
@@ -32,21 +33,33 @@ prompt = f"""
 回答は数字1つ（例: 65）のみを出力してください。
 """
 
-response = client.models.generate_content(
-    model="gemini-3.6-flash",
-    contents=prompt,
-)
+# 503エラー対策：最大5回自動で再試行する
+score = 50
+max_retries = 5
 
-# スコアの抽出
-try:
-    score = int(response.text.strip())
-except Exception:
-    match = re.search(r"\d+", response.text)
-    score = int(match.group()) if match else 50
+for attempt in range(1, max_retries + 1):
+    try:
+        print(f"Gemini API呼び出し中... (試行 {attempt}/{max_retries})")
+        response = client.models.generate_content(
+            model="gemini-3.6-flash",
+            contents=prompt,
+        )
+        try:
+            score = int(response.text.strip())
+        except Exception:
+            match = re.search(r"\d+", response.text)
+            score = int(match.group()) if match else 50
+        print(f"判定成功！スコア: {score}")
+        break
+    except errors.APIError as e:
+        print(f"APIエラー発生 ({e.code}): {e.message}")
+        if attempt < max_retries:
+            print("サーバー混雑のため、5秒待って再試行します...")
+            time.sleep(5)
+        else:
+            print("再試行上限に達しました。安全のためスコア50で保存します。")
 
-print(f"判定スコア: {score}")
-
-# スコアと記事一覧をまとめて保存
+# 保存
 data = {
     "score": score,
     "articles": articles
