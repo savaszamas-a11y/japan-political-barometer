@@ -70,6 +70,44 @@
       font-weight: bold;
       color: #444;
     }
+    /* ニュースタイムラインのデザイン */
+.timeline-card {
+  margin-top: 30px;
+  text-align: left;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+.timeline-title {
+  font-size: 1.05rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 12px;
+  border-bottom: 2px solid #f0f2f5;
+  padding-bottom: 8px;
+}
+.news-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.news-item {
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.news-item:last-child {
+  border-bottom: none;
+}
+.news-link {
+  color: #1a73e8;
+  text-decoration: none;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.news-link:hover {
+  text-decoration: underline;
+}
   </style>
 </head>
 <body>
@@ -90,6 +128,14 @@
     <div class="status" id="statusText">判定中...</div>
   </div>
 
+  <!-- タイムライン表示枠 -->
+<div class="timeline-card">
+  <div class="timeline-title">📰 分析対象となった最新ニュース</div>
+  <ul id="newsList" class="news-list">
+    <li class="news-item">ニュースを読み込み中...</li>
+  </ul>
+</div>
+  
   <script>
   function updateMeter(score) {
     const pointer = document.getElementById('pointer');
@@ -120,6 +166,17 @@
         updateMeter(data.score);
       }, 1000);
     })
+    // タイムラインの描画
+if (data.articles && data.articles.length > 0) {
+  const newsList = document.getElementById('newsList');
+  newsList.innerHTML = data.articles.map(article => `
+    <li class="news-item">
+      <a href="${article.link}" target="_blank" rel="noopener noreferrer" class="news-link">
+        📌 ${article.title}
+      </a>
+    </li>
+  `).join('');
+}
     .catch(error => {
       console.error('読み込みエラー:', error);
       document.getElementById('statusText').innerText = 'データ読み込み中...';
