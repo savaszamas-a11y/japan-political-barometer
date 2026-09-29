@@ -250,15 +250,30 @@
     .book-card {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       border-radius: 12px;
       padding: 12px 14px;
-      gap: 12px;
+      gap: 14px;
+    }
+
+    .book-cover-link {
+      flex-shrink: 0;
+      display: block;
+    }
+
+    .book-cover-img {
+      width: 60px;
+      height: 85px;
+      object-fit: cover;
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+      display: block;
+      background-color: #e2e8f0;
     }
 
     .book-info {
+      flex: 1;
       text-align: left;
     }
 
@@ -273,6 +288,7 @@
     .book-desc {
       font-size: 0.75rem;
       color: #64748b;
+      line-height: 1.4;
     }
 
     .amazon-btn {
@@ -286,6 +302,7 @@
       border-radius: 6px;
       box-shadow: 0 1px 2px rgba(0,0,0,0.1);
       transition: background 0.15s ease;
+      white-space: nowrap;
     }
 
     .amazon-btn:hover {
@@ -299,20 +316,6 @@
       text-align: center;
       line-height: 1.4;
     }
-
-.book-cover-link {
-  flex-shrink: 0;
-  display: block;
-}
-.book-cover-img {
-  width: 65px;
-  height: 95px;
-  object-fit: cover;
-  border-radius: 4px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-  display: block;
-}
-    
   </style>
 </head>
 <body>
@@ -374,6 +377,9 @@
       
       <!-- 書籍枠 1 -->    
       <div class="book-card">
+        <a href="https://link.amazon/B08UuoYNB" target="_blank" rel="noopener noreferrer sponsored" class="book-cover-link">
+          <img src="ここに画像アドレスを貼り付け" alt="「こうして日本人だけが騙される」" class="book-cover-img">
+        </a>
         <div class="book-info">
           <div class="book-title">「こうして日本人だけが騙される」マスコミが報じない「国際政治の舞台裏」</div>
           <div class="book-desc">丸谷元人 著 / メディア報道の構造や国際政治・情報戦の裏側を鋭く解説</div>
@@ -385,20 +391,19 @@
 
       <!-- 書籍枠 2 -->
       <div class="book-card">
-        <!-- 表紙サムネイル（右クリックでコピーしたURLを貼る） -->
         <a href="https://link.amazon/B095hWFST" target="_blank" rel="noopener noreferrer sponsored" class="book-cover-link">
-          <img src="【https://m.media-amazon.com/images/I/510vp12BmAL._SL1410_.jpg】" alt="なぜ日本は没落するか" class="book-cover-img">
+          <img src="https://m.media-amazon.com/images/I/510vp12BmAL._SL1410_.jpg" alt="なぜ日本は没落するか" class="book-cover-img">
         </a>
-
-        <!-- 書籍情報 -->
         <div class="book-info">
           <div class="book-title">なぜ日本は没落するか</div>
           <div class="book-desc">日本の政治・経済・社会構造が抱える根深い課題と停滞の本質を突いた必読書</div>
-          <a href="https://link.amazon/B095hWFST" target="_blank" rel="noopener noreferrer sponsored" class="amazon-btn">
-            Amazonで見る
-          </a>
         </div>
+        <a href="https://link.amazon/B095hWFST" target="_blank" rel="noopener noreferrer sponsored" class="amazon-btn">
+          Amazonで見る
+        </a>
       </div>
+
+    </div>
 
     <p class="disclosure">※ Amazonのアソシエイトとして、日本政治バロメーターは適格販売により収入を得ています。</p>
   </div>
