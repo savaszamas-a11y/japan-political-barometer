@@ -10,29 +10,46 @@
       background-color: #f0f2f5;
       margin: 0;
       padding: 40px 16px;
-      /* 縦並び＆中央揃えにして横並びを防止 */
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 20px;
     }
 
-    /* 共通カードスタイル */
+    /* サイトタイトル */
+    .site-header {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .site-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #111827;
+      margin: 0 0 8px 0;
+      letter-spacing: -0.5px;
+    }
+    .site-subtitle {
+      font-size: 0.95rem;
+      color: #6b7280;
+      margin: 0;
+    }
+
+    /* 共通カード */
     .card {
       background: #ffffff;
       width: 100%;
       max-width: 500px;
-      padding: 30px 24px;
+      padding: 28px 24px;
       border-radius: 16px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.05);
       box-sizing: border-box;
       text-align: center;
     }
 
-    h1 {
-      font-size: 1.25rem;
-      margin: 0 0 24px;
-      color: #1a1a1a;
+    h2 {
+      font-size: 1.15rem;
+      margin: 0 0 20px;
+      color: #1f2937;
     }
 
     .label-row {
@@ -51,7 +68,7 @@
       height: 18px;
       background: linear-gradient(to right, #90caf9, #f48fb1);
       border-radius: 9px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
 
     .pointer {
@@ -68,10 +85,40 @@
     }
 
     .status-text {
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       font-weight: bold;
-      color: #424242;
+      color: #374151;
       min-height: 1.5em;
+    }
+
+    /* X（旧Twitter）シェアボタン */
+    .share-container {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #f3f4f6;
+    }
+    .x-share-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #0f1419;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 0.95rem;
+      padding: 10px 20px;
+      border-radius: 24px;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      cursor: pointer;
+    }
+    .x-share-btn:hover {
+      background-color: #272c30;
+      transform: translateY(-1px);
+    }
+    .x-logo {
+      margin-right: 8px;
+      font-weight: 900;
+      font-size: 1.05rem;
     }
 
     /* タイムライン枠 */
@@ -81,9 +128,9 @@
     .timeline-title {
       font-size: 1rem;
       font-weight: bold;
-      color: #333;
+      color: #111827;
       margin-bottom: 14px;
-      border-bottom: 2px solid #f0f2f5;
+      border-bottom: 2px solid #f3f4f6;
       padding-bottom: 8px;
     }
     .news-list {
@@ -93,13 +140,13 @@
     }
     .news-item {
       padding: 10px 0;
-      border-bottom: 1px solid #f5f5f5;
+      border-bottom: 1px solid #f3f4f6;
     }
     .news-item:last-child {
       border-bottom: none;
     }
     .news-link {
-      color: #1a73e8;
+      color: #2563eb;
       text-decoration: none;
       font-size: 0.9rem;
       line-height: 1.4;
@@ -112,9 +159,15 @@
 </head>
 <body>
 
-  <!-- メーター表示カード -->
+  <!-- サイトヘッダー -->
+  <header class="site-header">
+    <h1 class="site-title">日本政治バロメーター</h1>
+    <p class="site-subtitle">主要メディアの政治ニュースからAIが論調を毎日客観分析</p>
+  </header>
+
+  <!-- メーターカード -->
   <div class="card">
-    <h1>現在の日本はどちら寄り？</h1>
+    <h2>現在の日本はどちら寄り？</h2>
     <div class="label-row">
       <span class="label-liberal">◀ リベラル</span>
       <span class="label-conservative">保守 ▶</span>
@@ -123,9 +176,16 @@
       <div id="pointer" class="pointer"></div>
     </div>
     <div id="statusText" class="status-text">判定中...</div>
+
+    <!-- Xシェアボタン -->
+    <div class="share-container">
+      <a id="xShareBtn" class="x-share-btn" href="#" target="_blank" rel="noopener noreferrer">
+        <span class="x-logo">𝕏</span> 結果をポストする
+      </a>
+    </div>
   </div>
 
-  <!-- ニュースタイムラインカード（真下に配置） -->
+  <!-- ニュースタイムラインカード -->
   <div class="card timeline-card">
     <div class="timeline-title">📰 分析対象となった最新ニュース</div>
     <ul id="newsList" class="news-list">
@@ -134,18 +194,38 @@
   </div>
 
   <script>
+    let currentScore = 50;
+    let currentTendency = "中道・拮抗";
+
     function updateMeter(score) {
+      currentScore = score;
       const pointer = document.getElementById('pointer');
       const statusText = document.getElementById('statusText');
       pointer.style.left = `${score}%`;
 
       if (score < 45) {
-        statusText.innerHTML = `判定：<span style="color:#1e88e5">リベラル傾向（${score}%）</span>`;
+        currentTendency = `リベラル傾向（${score}%）`;
+        statusText.innerHTML = `判定：<span style="color:#1e88e5">${currentTendency}</span>`;
       } else if (score > 55) {
-        statusText.innerHTML = `判定：<span style="color:#e53935">保守傾向（${score}%）</span>`;
+        currentTendency = `保守傾向（${score}%）`;
+        statusText.innerHTML = `判定：<span style="color:#e53935">${currentTendency}</span>`;
       } else {
-        statusText.innerHTML = `判定：<span>中道・拮抗（${score}%）</span>`;
+        currentTendency = `中道・拮抗（${score}%）`;
+        statusText.innerHTML = `判定：<span>${currentTendency}</span>`;
       }
+
+      // Xシェアリンクを動的に生成
+      updateShareButton();
+    }
+
+    function updateShareButton() {
+      const shareBtn = document.getElementById('xShareBtn');
+      const pageUrl = window.location.origin + window.location.pathname;
+      const tweetText = `【日本政治バロメーター】\n本日のAI政治判定：${currentTendency}\n最新ニュースから社会・政治の論調を可視化中！\n\n`;
+      const hashtags = "政治バロメーター,日本政治";
+
+      const shareUrl = `https://x.com/intent/post?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(pageUrl)}&hashtags=${encodeURIComponent(hashtags)}`;
+      shareBtn.href = shareUrl;
     }
 
     // score.json の読み込み
@@ -155,12 +235,10 @@
         return response.json();
       })
       .then(data => {
-        // メーターの更新
         if (data.score !== undefined) {
           setTimeout(() => updateMeter(data.score), 500);
         }
 
-        // タイムラインの更新
         const newsList = document.getElementById('newsList');
         if (data.articles && data.articles.length > 0) {
           newsList.innerHTML = data.articles.map(a => `
