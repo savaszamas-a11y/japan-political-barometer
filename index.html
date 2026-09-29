@@ -177,7 +177,7 @@
     }
 
     /* ニュースタイムライン */
-    .timeline-header {
+    .section-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -186,10 +186,13 @@
       border-bottom: 1px solid #f1f5f9;
     }
 
-    .timeline-heading {
+    .section-heading {
       font-size: 0.95rem;
       font-weight: 700;
       color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .news-list {
@@ -236,10 +239,71 @@
     .news-title:hover {
       text-decoration: underline;
     }
+
+    /* 書籍紹介（Amazonアソシエイト枠） */
+    .book-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .book-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px 14px;
+      gap: 12px;
+    }
+
+    .book-info {
+      text-align: left;
+    }
+
+    .book-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 4px;
+      line-height: 1.4;
+    }
+
+    .book-desc {
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+
+    .amazon-btn {
+      flex-shrink: 0;
+      background: #ff9900;
+      color: #111;
+      text-decoration: none;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 8px 12px;
+      border-radius: 6px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      transition: background 0.15s ease;
+    }
+
+    .amazon-btn:hover {
+      background: #e68a00;
+    }
+
+    .disclosure {
+      margin-top: 14px;
+      font-size: 0.7rem;
+      color: #94a3b8;
+      text-align: center;
+      line-height: 1.4;
+    }
   </style>
 </head>
 <body>
 
+  <!-- ヘッダー -->
   <header class="header">
     <div class="badge-live">
       <span class="badge-live-dot"></span>
@@ -249,6 +313,7 @@
     <p class="subtitle">主要メディアの政治ニュースからAIが世論と論調を客観分析</p>
   </header>
 
+  <!-- メーターカード -->
   <div class="card">
     <h2 class="card-title">現在の日本はどちら寄り？</h2>
     
@@ -274,14 +339,50 @@
     </div>
   </div>
 
+  <!-- ニュースタイムラインカード -->
   <div class="card">
-    <div class="timeline-header">
-      <div class="timeline-heading">📰 分析対象となった最新ニュース</div>
+    <div class="section-header">
+      <div class="section-heading">📰 分析対象となった最新ニュース</div>
     </div>
 
     <ul id="newsList" class="news-list">
       <li style="color: #94a3b8; font-size: 0.88rem; padding: 8px 0;">ニュースを読み込み中...</li>
     </ul>
+  </div>
+
+  <!-- おすすめ書籍（Amazonアソシエイト枠） -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-heading">📚 政治・社会を深く知るおすすめ書籍</div>
+    </div>
+
+    <div class="book-list">
+      <!-- 書籍枠 1 -->
+      <div class="book-card">
+        <div class="book-info">
+          <div class="book-title">日本の政治・社会思想を読み解く定番書</div>
+          <div class="book-desc">保守・リベラルの対立軸と日本政治の基礎知識を整理</div>
+        </div>
+        <!-- アソシエイトのリンクに差し替える部分 -->
+        <a href="https://www.amazon.co.jp/" target="_blank" rel="noopener noreferrer sponsored" class="amazon-btn">
+          Amazonで見る
+        </a>
+      </div>
+
+      <!-- 書籍枠 2 -->
+      <div class="book-card">
+        <div class="book-info">
+          <div class="book-title">現代ニュースの論点と構造がわかる本</div>
+          <div class="book-desc">メディア報道の背景や政策の仕組みを客観的に解説</div>
+        </div>
+        <!-- アソシエイトのリンクに差し替える部分 -->
+        <a href="https://www.amazon.co.jp/" target="_blank" rel="noopener noreferrer sponsored" class="amazon-btn">
+          Amazonで見る
+        </a>
+      </div>
+    </div>
+
+    <p class="disclosure">※ Amazonのアソシエイトとして、日本政治バロメーターは適格販売により収入を得ています。</p>
   </div>
 
   <script>
