@@ -5,10 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>日本政治バロメーター</title>
   <style>
-    body {
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      background-color: #f0f2f5;
+    * {
+      box-sizing: border-box;
       margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      color: #1e293b;
+      min-height: 100vh;
       padding: 40px 16px;
       display: flex;
       flex-direction: column;
@@ -16,245 +23,325 @@
       gap: 20px;
     }
 
-    /* サイトタイトル */
-    .site-header {
+    /* ヘッダー */
+    .header {
       text-align: center;
-      margin-bottom: 10px;
-    }
-    .site-title {
-      font-size: 2rem;
-      font-weight: 800;
-      color: #111827;
-      margin: 0 0 8px 0;
-      letter-spacing: -0.5px;
-    }
-    .site-subtitle {
-      font-size: 0.95rem;
-      color: #6b7280;
-      margin: 0;
+      max-width: 520px;
     }
 
-    /* 共通カード */
+    .badge-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ecfdf5;
+      color: #059669;
+      border: 1px solid #a7f3d0;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .badge-live-dot {
+      width: 7px;
+      height: 7px;
+      background: #10b981;
+      border-radius: 50%;
+    }
+
+    .title {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    /* カード共通 */
     .card {
       background: #ffffff;
       width: 100%;
-      max-width: 500px;
+      max-width: 520px;
+      border-radius: 20px;
       padding: 28px 24px;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-      box-sizing: border-box;
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 10px -6px rgba(15, 23, 42, 0.03);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    /* メーター部分 */
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #0f172a;
       text-align: center;
-    }
-
-    h2 {
-      font-size: 1.15rem;
-      margin: 0 0 20px;
-      color: #1f2937;
-    }
-
-    .label-row {
-      display: flex;
-      justify-content: space-between;
-      font-weight: bold;
-      font-size: 0.95rem;
-      margin-bottom: 12px;
-    }
-    .label-liberal { color: #1e88e5; }
-    .label-conservative { color: #e53935; }
-
-    .meter-container {
-      position: relative;
-      width: 100%;
-      height: 18px;
-      background: linear-gradient(to right, #90caf9, #f48fb1);
-      border-radius: 9px;
       margin-bottom: 20px;
     }
 
-    .pointer {
+    .meter-labels {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .label-lib { color: #0284c7; }
+    .label-con { color: #e11d48; }
+
+    .meter-track {
+      position: relative;
+      width: 100%;
+      height: 16px;
+      background: linear-gradient(90deg, #38bdf8 0%, #cbd5e1 50%, #fb7185 100%);
+      border-radius: 9999px;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08);
+      margin-bottom: 24px;
+    }
+
+    .meter-pointer {
       position: absolute;
-      top: -6px;
+      top: 50%;
       left: 50%;
-      width: 8px;
-      height: 30px;
-      background-color: #212121;
-      border-radius: 4px;
-      transform: translateX(-50%);
-      transition: left 1s ease-in-out;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      transform: translate(-50%, -50%);
+      width: 24px;
+      height: 24px;
+      background: #ffffff;
+      border: 4px solid #0f172a;
+      border-radius: 50%;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+      transition: left 1s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    .status-text {
-      font-size: 1.1rem;
-      font-weight: bold;
-      color: #374151;
-      min-height: 1.5em;
+    /* 判定バッジ */
+    .result-container {
+      text-align: center;
+      margin-bottom: 20px;
     }
 
-    /* X（旧Twitter）シェアボタン */
-    .share-container {
-      margin-top: 20px;
-      padding-top: 16px;
-      border-top: 1px solid #f3f4f6;
+    .result-label {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
     }
-    .x-share-btn {
+
+    .result-badge {
+      display: inline-block;
+      padding: 8px 22px;
+      border-radius: 9999px;
+      font-size: 1.15rem;
+      font-weight: 800;
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #e2e8f0;
+    }
+
+    /* Xシェアボタン */
+    .share-wrapper {
+      padding-top: 18px;
+      border-top: 1px solid #f1f5f9;
+      text-align: center;
+    }
+
+    .x-btn {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      background-color: #0f1419;
+      gap: 8px;
+      background: #0f172a;
       color: #ffffff;
       text-decoration: none;
-      font-weight: bold;
-      font-size: 0.95rem;
-      padding: 10px 20px;
-      border-radius: 24px;
-      transition: background-color 0.2s ease, transform 0.1s ease;
-      cursor: pointer;
-    }
-    .x-share-btn:hover {
-      background-color: #272c30;
-      transform: translateY(-1px);
-    }
-    .x-logo {
-      margin-right: 8px;
-      font-weight: 900;
-      font-size: 1.05rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 11px 22px;
+      border-radius: 9999px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+      transition: background 0.2s ease, transform 0.1s ease;
     }
 
-    /* タイムライン枠 */
-    .timeline-card {
-      text-align: left;
+    .x-btn:hover {
+      background: #334155;
+      transform: translateY(-1px);
     }
-    .timeline-title {
-      font-size: 1rem;
-      font-weight: bold;
-      color: #111827;
-      margin-bottom: 14px;
-      border-bottom: 2px solid #f3f4f6;
-      padding-bottom: 8px;
+
+    /* ニュースタイムライン */
+    .timeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
     }
+
+    .timeline-heading {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
     .news-list {
       list-style: none;
-      padding: 0;
-      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
-    .news-item {
-      padding: 10px 0;
-      border-bottom: 1px solid #f3f4f6;
+
+    .news-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      transition: background 0.15s ease;
     }
-    .news-item:last-child {
-      border-bottom: none;
+
+    .news-card:hover {
+      background: #f1f5f9;
     }
-    .news-link {
+
+    .news-tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: #e2e8f0;
+      color: #475569;
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+      margin-top: 2px;
+    }
+
+    .news-title {
+      font-size: 0.88rem;
       color: #2563eb;
       text-decoration: none;
-      font-size: 0.9rem;
-      line-height: 1.4;
-      display: inline-block;
+      font-weight: 500;
+      line-height: 1.45;
     }
-    .news-link:hover {
+
+    .news-title:hover {
       text-decoration: underline;
     }
   </style>
 </head>
 <body>
 
-  <!-- サイトヘッダー -->
-  <header class="site-header">
-    <h1 class="site-title">日本政治バロメーター</h1>
-    <p class="site-subtitle">主要メディアの政治ニュースからAIが論調を毎日客観分析</p>
+  <header class="header">
+    <div class="badge-live">
+      <span class="badge-live-dot"></span>
+      AI Daily Analysis
+    </div>
+    <h1 class="title">日本政治バロメーター</h1>
+    <p class="subtitle">主要メディアの政治ニュースからAIが世論と論調を客観分析</p>
   </header>
 
-  <!-- メーターカード -->
   <div class="card">
-    <h2>現在の日本はどちら寄り？</h2>
-    <div class="label-row">
-      <span class="label-liberal">◀ リベラル</span>
-      <span class="label-conservative">保守 ▶</span>
+    <h2 class="card-title">現在の日本はどちら寄り？</h2>
+    
+    <div class="meter-labels">
+      <span class="label-lib">◀ リベラル</span>
+      <span style="color: #94a3b8; font-size: 0.75rem; font-weight: 600;">中道 (50%)</span>
+      <span class="label-con">保守 ▶</span>
     </div>
-    <div class="meter-container">
-      <div id="pointer" class="pointer"></div>
-    </div>
-    <div id="statusText" class="status-text">判定中...</div>
 
-    <!-- Xシェアボタン -->
-    <div class="share-container">
-      <a id="xShareBtn" class="x-share-btn" href="#" target="_blank" rel="noopener noreferrer">
-        <span class="x-logo">𝕏</span> 結果をポストする
+    <div class="meter-track">
+      <div id="pointer" class="meter-pointer"></div>
+    </div>
+
+    <div class="result-container">
+      <div class="result-label">TODAY'S SCORE</div>
+      <div id="statusBadge" class="result-badge">分析中...</div>
+    </div>
+
+    <div class="share-wrapper">
+      <a id="xShareBtn" class="x-btn" href="#" target="_blank" rel="noopener noreferrer">
+        <span style="font-weight: 900;">𝕏</span> 結果をポストする
       </a>
     </div>
   </div>
 
-  <!-- ニュースタイムラインカード -->
-  <div class="card timeline-card">
-    <div class="timeline-title">📰 分析対象となった最新ニュース</div>
+  <div class="card">
+    <div class="timeline-header">
+      <div class="timeline-heading">📰 分析対象となった最新ニュース</div>
+    </div>
+
     <ul id="newsList" class="news-list">
-      <li class="news-item" style="color: #888;">ニュースを読み込み中...</li>
+      <li style="color: #94a3b8; font-size: 0.88rem; padding: 8px 0;">ニュースを読み込み中...</li>
     </ul>
   </div>
 
   <script>
-    let currentScore = 50;
     let currentTendency = "中道・拮抗";
 
     function updateMeter(score) {
-      currentScore = score;
       const pointer = document.getElementById('pointer');
-      const statusText = document.getElementById('statusText');
+      const badge = document.getElementById('statusBadge');
       pointer.style.left = `${score}%`;
 
       if (score < 45) {
         currentTendency = `リベラル傾向（${score}%）`;
-        statusText.innerHTML = `判定：<span style="color:#1e88e5">${currentTendency}</span>`;
+        badge.style.background = "#eff6ff";
+        badge.style.borderColor = "#bfdbfe";
+        badge.style.color = "#0284c7";
       } else if (score > 55) {
         currentTendency = `保守傾向（${score}%）`;
-        statusText.innerHTML = `判定：<span style="color:#e53935">${currentTendency}</span>`;
+        badge.style.background = "#fff1f2";
+        badge.style.borderColor = "#fecdd3";
+        badge.style.color = "#e11d48";
       } else {
         currentTendency = `中道・拮抗（${score}%）`;
-        statusText.innerHTML = `判定：<span>${currentTendency}</span>`;
+        badge.style.background = "#f1f5f9";
+        badge.style.borderColor = "#e2e8f0";
+        badge.style.color = "#475569";
       }
 
-      // Xシェアリンクを動的に生成
+      badge.innerText = currentTendency;
       updateShareButton();
     }
 
     function updateShareButton() {
       const shareBtn = document.getElementById('xShareBtn');
       const pageUrl = window.location.origin + window.location.pathname;
-      const tweetText = `【日本政治バロメーター】\n本日のAI政治判定：${currentTendency}\n最新ニュースから社会・政治の論調を可視化中！\n\n`;
-      const hashtags = "政治バロメーター,日本政治";
-
-      const shareUrl = `https://x.com/intent/post?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(pageUrl)}&hashtags=${encodeURIComponent(hashtags)}`;
-      shareBtn.href = shareUrl;
+      const tweetText = `【日本政治バロメーター】\n本日のAI政治判定：${currentTendency}\n主要ニュースから社会の論調を可視化中！\n\n`;
+      shareBtn.href = `https://x.com/intent/post?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(pageUrl)}&hashtags=政治バロメーター,日本政治`;
     }
 
-    // score.json の読み込み
     fetch(`score.json?t=${new Date().getTime()}`, { cache: 'no-store' })
-      .then(response => {
-        if (!response.ok) throw new Error('データ取得失敗');
-        return response.json();
-      })
+      .then(res => res.json())
       .then(data => {
         if (data.score !== undefined) {
-          setTimeout(() => updateMeter(data.score), 500);
+          setTimeout(() => updateMeter(data.score), 400);
         }
 
         const newsList = document.getElementById('newsList');
         if (data.articles && data.articles.length > 0) {
           newsList.innerHTML = data.articles.map(a => `
-            <li class="news-item">
-              <a href="${a.link}" target="_blank" rel="noopener noreferrer" class="news-link">
-                📌 ${a.title}
+            <li class="news-card">
+              <span class="news-tag">政治</span>
+              <a href="${a.link}" target="_blank" rel="noopener noreferrer" class="news-title">
+                ${a.title}
               </a>
             </li>
           `).join('');
-        } else {
-          newsList.innerHTML = '<li class="news-item" style="color:#888;">記事データがありません</li>';
         }
       })
       .catch(err => {
         console.error(err);
-        document.getElementById('statusText').innerText = 'データ読み込み中...';
+        document.getElementById('statusBadge').innerText = 'データ取得エラー';
       });
   </script>
 </body>
